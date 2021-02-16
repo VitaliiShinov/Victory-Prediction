@@ -2,6 +2,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -32,19 +33,19 @@ public class Window extends JFrame {
 	
 	 public Window(int w, int h) {
 	    super("Victory Prediction");
-	    Data data = Data.getInstance();
 	    this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    this.setSize(w,h);	
 	    setResizable(false);
 	    this.setLayout(new GridLayout(1,3));
+	    
+	    Presenter presenter = new Presenter();
 	    
 	    b1 = new  JButton("Calc");
 	    b1.setPreferredSize(new Dimension(100,100));
 	    b1.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		try {
-	    			Calc.calc();
-	    			data.setLuckInfuence(data.getLuckInfuence()/2+data.getLuckInfuence());
+	    			presenter.calc();
 	    			refresh();
 	    			b1.setEnabled(false);
 	    		}catch (Exception e1) {
@@ -58,7 +59,7 @@ public class Window extends JFrame {
 	    b1.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		try {
-	    			Calc.calc();
+	    			presenter.calc();
 	    			refresh();
 	    			b1.setEnabled(false);
 	    		}catch (Exception e1) {
@@ -73,18 +74,18 @@ public class Window extends JFrame {
 	    	public void actionPerformed(ActionEvent e) {
 	    		try {
 	    			
-	    			Nation customNation = 	new Nation(nameInput.getText(), Integer.parseInt(popInput.getText()), 
+	    			Nation customNation = presenter.getCustomNation	(nameInput.getText(), Integer.parseInt(popInput.getText()), 
 	    									Integer.parseInt(milTechInput.getText()), Integer.parseInt(terrInput.getText()),
 	    									Integer.parseInt(luckInput.getText()), Integer.parseInt(ageInput.getText()),
 	    									Integer.parseInt(strengthInput.getText()));
 	    			
-	    			Nation victoriousNation = Calc.calc(data.getNations().get(nations.getSelectedIndex()), customNation);
+	    			Nation victoriousNation = presenter.calc(nations.getSelectedIndex(), customNation);
 	    			if(victoriousNation.getName() == customNation.getName())
 	    				JOptionPane.showMessageDialog(	b2.getParent(), "GLORY TO " + customNation.getName() +"!!! YOU ARE VICTORIOUS OVER " + 
-	    												data.getNations().get(nations.getSelectedIndex()).getName());
+	    												presenter.getNationByIndex(nations.getSelectedIndex()).getName());
 	    			
 	    			else
-	    				JOptionPane.showMessageDialog(	b2.getParent(), "BAD LUCK " + data.getNations().get(nations.getSelectedIndex()).getName() 
+	    				JOptionPane.showMessageDialog(	b2.getParent(), "BAD LUCK " + presenter.getNationByIndex(nations.getSelectedIndex()).getName() 
 	    												+" COMLITLLY DEMOLISHED " + customNation.getName());
 	    
 	    		}catch (Exception e1) {
@@ -125,8 +126,10 @@ public class Window extends JFrame {
 	    nationPanel = new JPanel(new GridLayout(2,1));
 	    nations= new JComboBox<Nation>();
 	    
-	    for(int i=0;  i<data.getNations().size(); i++){
-	    	nations.addItem(data.getNations().get(i).getName());
+	    List<Nation> allNations = presenter.getNations();
+	    
+	    for(int i=0;  i<allNations.size(); i++){
+	    	nations.addItem(allNations.get(i).getName());
 	    }
 	    
 	    nationPanel.add(nations);

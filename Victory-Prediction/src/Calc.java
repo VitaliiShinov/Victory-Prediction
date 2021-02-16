@@ -2,8 +2,8 @@
 public class Calc {
 
 		// changes influence values
-		public static void calc() throws Exception{
-			Data data = Data.getInstance();
+		public static void calc(Data data) throws Exception{
+			
 			
 			int numOfBattles = data.getBattles().size();
 			
